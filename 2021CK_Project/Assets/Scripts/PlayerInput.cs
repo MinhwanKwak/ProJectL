@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public PlayerMove playerMove;
 
-    // Update is called once per frame
-    void Update()
+    public void OnMove(InputAction.CallbackContext context)
     {
+        //if(context.started)
+        //{
+            Vector2 value = context.ReadValue<Vector2>();
+            playerMove.SetMoveInput(value);
+        //}
+        if(context.canceled)
+        {
+            playerMove.SetMoveInput(Vector2.zero);
+        }
         
+
+       
     }
 }
