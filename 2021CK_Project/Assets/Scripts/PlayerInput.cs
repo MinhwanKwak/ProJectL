@@ -18,8 +18,11 @@ public class PlayerInput : MonoBehaviour
         {
             playerMove.SetMoveInput(Vector2.zero);
         }
-        
+    }
 
-       
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        Vector2 value = context.ReadValue<Vector2>();
+        playerMove.SetRotInput(value);
     }
 }
