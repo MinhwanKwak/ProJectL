@@ -9,11 +9,11 @@ public class PlayerInput : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        //if(context.started)
-        //{
+        if(context.started || context.performed)
+        {
             Vector2 value = context.ReadValue<Vector2>();
             playerMove.SetMoveInput(value);
-        //}
+        }
         if(context.canceled)
         {
             playerMove.SetMoveInput(Vector2.zero);

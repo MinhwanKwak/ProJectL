@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public GameObject Player;
+    public GameObject CamPivot;
 
     [HideInInspector]
     public float RotHInput;
@@ -15,7 +16,8 @@ public class PlayerMove : MonoBehaviour
     [HideInInspector]
     public float MoveVInput;
 
-    bool IsVRotAim = true;
+    bool IsUpEndAim = false;
+    bool IsDownEndAim = false;
 
     float Sensitivity = 1.0f;
 
@@ -23,51 +25,62 @@ public class PlayerMove : MonoBehaviour
     {
         if (Mathf.Abs(MoveHInput) > 0.1f)
         {
-            //Player.transform.localPosition += new Vector3(MoveHInput,0,0);
-            Player.transform.localPosition += Player.transform.right * MoveHInput;
+            Player.transform.localPosition += Player.transform.right * MoveHInput * Time.deltaTime * 10.0f;
         }
 
         if (Mathf.Abs(MoveVInput) > 0.1f)
         {
-            //Player.transform.localPosition += new Vector3(0, 0, MoveVInput);
-            Player.transform.localPosition += Player.transform.forward * MoveVInput;
+            Player.transform.localPosition += Player.transform.forward * MoveVInput * Time.deltaTime * 10.0f;
         }
 
-        //if (Mathf.Abs(RotHInput) > 0.1f)
-        //{
-        //    Player.transform.Rotate(0, RotHInput, 0);
-        //}
-
-        if (Player.transform.eulerAngles.x >= 30.0f && Player.transform.eulerAngles.x <= 340.0f) // 시야범위 바깥
+        if (Mathf.Abs(RotHInput) > 0.1f)
         {
-            IsVRotAim = false;
-            if (Player.transform.eulerAngles.x >= 330.0f)
+            Player.transform.Rotate(0, RotHInput, 0);
+        }
+
+        if (CamPivot.transform.eulerAngles.x >= 30.0f && CamPivot.transform.eulerAngles.x <= 340.0f) // 시야범위 바깥
+        {
+            if (CamPivot.transform.eulerAngles.x >= 330.0f)
             {
-                // value (0,1) 못하게?
-                Player.transform.eulerAngles = new Vector3(340.001f, Player.transform.eulerAngles.y, Player.transform.eulerAngles.z);
+                // value (0,1) 못하게
+                IsUpEndAim = true;
             }
             else
             {
-                // value (0,-1) 못하게?
-                Player.transform.eulerAngles = new Vector3(29.999f, Player.transform.eulerAngles.y, Player.transform.eulerAngles.z);
+                // value (0,-1) 못하게
+                IsDownEndAim = true;
             }
         }
         else
-            IsVRotAim = true;
+        {
+            IsUpEndAim = false;
+            IsDownEndAim = false;
+        }
+           
 
         if (Mathf.Abs(RotVInput) > 0.1f)
         {
             if (RotVInput < 0)
             {
-                Sensitivity = -1.0f;
+                if (!IsDownEndAim)
+                {
+                    Sensitivity = -1.0f;
+                }
+                else
+                    Sensitivity = 0;
             }
             else
-                Sensitivity = 1.0f;
-
-            if(IsVRotAim)
             {
-                Player.transform.Rotate(new Vector3(-Sensitivity, 0, 0));
+                if (!IsUpEndAim)
+                {
+                    Sensitivity = 1.0f;
+                }
+                else
+                    Sensitivity = 0;
             }
+
+            CamPivot.transform.Rotate(new Vector3(-Sensitivity, 0, 0));
+            
         }
     }
 
