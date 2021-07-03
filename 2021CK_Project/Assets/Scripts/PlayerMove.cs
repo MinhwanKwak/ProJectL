@@ -19,9 +19,16 @@ public class PlayerMove : MonoBehaviour
     bool IsUpEndAim = false;
     bool IsDownEndAim = false;
 
-    float Sensitivity = 1.0f;
+    float RotVControl = 10.0f;
+    float Sensitivity = 10.0f;
 
     void Update()
+    {
+        PlayerMovement();
+        PlayerRotation();
+    }
+
+    public void PlayerMovement()
     {
         if (Mathf.Abs(MoveHInput) > 0.1f)
         {
@@ -32,12 +39,10 @@ public class PlayerMove : MonoBehaviour
         {
             Player.transform.localPosition += Player.transform.forward * MoveVInput * Time.deltaTime * 10.0f;
         }
+    }
 
-        if (Mathf.Abs(RotHInput) > 0.1f)
-        {
-            Player.transform.Rotate(0, RotHInput, 0);
-        }
-
+    public void PlayerRotation()
+    {
         if (CamPivot.transform.eulerAngles.x >= 30.0f && CamPivot.transform.eulerAngles.x <= 340.0f) // 시야범위 바깥
         {
             if (CamPivot.transform.eulerAngles.x >= 330.0f)
@@ -56,7 +61,6 @@ public class PlayerMove : MonoBehaviour
             IsUpEndAim = false;
             IsDownEndAim = false;
         }
-           
 
         if (Mathf.Abs(RotVInput) > 0.1f)
         {
@@ -64,23 +68,26 @@ public class PlayerMove : MonoBehaviour
             {
                 if (!IsDownEndAim)
                 {
-                    Sensitivity = -1.0f;
+                    RotVControl = -10.0f;
                 }
                 else
-                    Sensitivity = 0;
+                    RotVControl = 0;
             }
             else
             {
                 if (!IsUpEndAim)
                 {
-                    Sensitivity = 1.0f;
+                    RotVControl = 10.0f;
                 }
                 else
-                    Sensitivity = 0;
+                    RotVControl = 0;
             }
+            CamPivot.transform.Rotate(new Vector3(-RotVControl * Time.deltaTime * Sensitivity, 0, 0));
+        }
 
-            CamPivot.transform.Rotate(new Vector3(-Sensitivity, 0, 0));
-            
+        if (Mathf.Abs(RotHInput) > 0.1f)
+        {
+            Player.transform.Rotate(0, RotHInput * Time.deltaTime * Sensitivity * 3, 0);
         }
     }
 
